@@ -14,6 +14,7 @@ use amethyst::{
 
 mod pong;
 mod systems;
+mod components;
 use crate::pong::Pong;
 
 fn main() -> amethyst::Result<()> {

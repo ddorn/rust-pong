@@ -1,10 +1,10 @@
 use amethyst::{
     assets::{AssetStorage, Loader, Handle},
     core::transform::Transform,
-    ecs::prelude::{Component, DenseVecStorage},
     prelude::*,
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
 };
+use crate::components::{Paddle, Side, Ball};
 
 
 pub const ARENA_HEIGHT: f32 = 100.0;
@@ -13,42 +13,23 @@ pub const ARENA_WIDTH: f32 = 100.0;
 pub const PADDLE_HEIGHT: f32 = 16.0;
 pub const PADDLE_WIDTH: f32 = 4.0;
 
-pub enum Side {
-    Left,
-    Right,
-}
-
-pub struct Paddle {
-    pub side: Side,
-    width: f32,
-    height: f32,
-}
+pub const BALL_RADIUS: f32 = 2.0;
+pub const BALL_VELOCITY: [f32; 2] = [90.0, 50.0];
 
 pub struct Pong;
 
 impl SimpleState for Pong {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
-        
+
         let sprite_sheet = load_sprite_sheet(world);
 
+        world.register::<Ball>();
+
         initialise_camera(world);
-        initialise_paddles(world, sprite_sheet);
+        initialise_paddles(world, sprite_sheet.clone());
+        initialise_ball(world, sprite_sheet);
     }
-}
-
-impl Paddle {
-    fn new(side: Side) -> Paddle {
-        Paddle {
-            side,
-            width: PADDLE_WIDTH,
-            height: PADDLE_HEIGHT,
-        }
-    }
-}
-
-impl Component for Paddle {
-    type Storage = DenseVecStorage<Self>;
 }
 
 
@@ -85,7 +66,6 @@ fn initialise_paddles(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
         .build();
 }
 
-
 fn initialise_camera(world: &mut World) {
     // Setup camera in a way that our screen covers whole arena and (0, 0) is in the bottom left.
     let mut transform = Transform::default();
@@ -119,4 +99,27 @@ fn load_sprite_sheet(world: &mut World) -> Handle<SpriteSheet> {
         (),
         &sprite_sheet_store,
     )
+}
+
+fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
+
+    let ball = Ball {
+        velocity: BALL_VELOCITY,
+        radius: 2.0,
+    };
+
+    let mut transform = Transform::default();
+    transform.set_translation_xyz(ARENA_WIDTH * 0.5, ARENA_HEIGHT * 0.5, 0.0);
+
+    let sprite_render = SpriteRender {
+        sprite_sheet,
+        sprite_number: 1
+    };
+
+    world
+        .create_entity()
+        .with(ball)
+        .with(transform)
+        .with(sprite_render)
+        .build();
 }
