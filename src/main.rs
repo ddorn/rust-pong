@@ -9,18 +9,21 @@ use amethyst::{
     },
     core::transform::TransformBundle,
     utils::application_root_dir,
+    input::{InputBundle, StringBindings}
 };
 
 mod pong;
+mod systems;
 use crate::pong::Pong;
 
-
-fn main() -> amethyst::Result<()>{
+fn main() -> amethyst::Result<()> {
     // Start the default logger to see errors and warnings
     amethyst::start_logger(Default::default());
 
     let app_root = application_root_dir()?;
     let display_config_path = app_root.join("config").join("display.ron");
+    let assets_dir = app_root.join("assets");
+    let bindings_path = app_root.join("config").join("bindings.ron");
 
     let game_data = GameDataBuilder::default()
         .with_bundle(
@@ -35,10 +38,15 @@ fn main() -> amethyst::Result<()>{
         )?
         .with_bundle(
             TransformBundle::new()
-        )?;
+        )?
+        .with_bundle(
+            InputBundle::<StringBindings>::new()
+                .with_bindings_from_file(bindings_path)?
+        )?
+        .with(systems::PaddleSystem,
+              "paddle_system",
+              &["input_system"]);
 
-    let assets_dir = app_root.join("assets");
-    let mut world = World::new();
     let mut game = Application::new(assets_dir, Pong, game_data)?;
     game.run();
 

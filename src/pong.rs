@@ -13,13 +13,13 @@ pub const ARENA_WIDTH: f32 = 100.0;
 pub const PADDLE_HEIGHT: f32 = 16.0;
 pub const PADDLE_WIDTH: f32 = 4.0;
 
-enum Side {
+pub enum Side {
     Left,
     Right,
 }
 
-struct Paddle {
-    side: Side,
+pub struct Paddle {
+    pub side: Side,
     width: f32,
     height: f32,
 }
@@ -29,9 +29,7 @@ pub struct Pong;
 impl SimpleState for Pong {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
-
-        world.register::<Paddle>();
-
+        
         let sprite_sheet = load_sprite_sheet(world);
 
         initialise_camera(world);
