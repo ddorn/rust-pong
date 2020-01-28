@@ -14,7 +14,7 @@ pub const PADDLE_HEIGHT: f32 = 16.0;
 pub const PADDLE_WIDTH: f32 = 4.0;
 
 pub const BALL_RADIUS: f32 = 2.0;
-pub const BALL_VELOCITY: [f32; 2] = [90.0, 50.0];
+pub const BALL_VELOCITY: [f32; 2] = [9.0, 5.0];
 
 pub struct Pong;
 
@@ -23,8 +23,6 @@ impl SimpleState for Pong {
         let world = data.world;
 
         let sprite_sheet = load_sprite_sheet(world);
-
-        world.register::<Ball>();
 
         initialise_camera(world);
         initialise_paddles(world, sprite_sheet.clone());
