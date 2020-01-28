@@ -14,7 +14,7 @@ pub const PADDLE_HEIGHT: f32 = 16.0;
 pub const PADDLE_WIDTH: f32 = 4.0;
 
 pub const BALL_RADIUS: f32 = 2.0;
-pub const BALL_VELOCITY: [f32; 2] = [9.0, 5.0];
+pub const BALL_VELOCITY: [f32; 2] = [30.0, 20.0];
 
 pub struct Pong;
 

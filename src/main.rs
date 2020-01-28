@@ -49,7 +49,10 @@ fn main() -> amethyst::Result<()> {
               &["input_system"])
         .with(systems::MoveBallsSystem,
               "move_balls_system",
-              &["paddle_system"]);
+              &["paddle_system"])
+        .with(systems::BounceBallsSystem,
+              "bounce_balls_system",
+              &["paddle_system", "move_balls_system"]);
 
     let mut game = Application::new(assets_dir, Pong, game_data)?;
     game.run();
