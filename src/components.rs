@@ -4,6 +4,8 @@ use amethyst::{
 
 use crate::pong::{PADDLE_WIDTH, PADDLE_HEIGHT};
 
+
+#[derive(Eq, PartialEq)]
 pub enum Side {
     Left,
     Right,
@@ -11,8 +13,8 @@ pub enum Side {
 
 pub struct Paddle {
     pub side: Side,
-    width: f32,
-    height: f32,
+    pub width: f32,
+    pub height: f32,
 }
 
 impl Component for Paddle {

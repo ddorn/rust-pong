@@ -103,7 +103,7 @@ fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
 
     let ball = Ball {
         velocity: BALL_VELOCITY,
-        radius: 2.0,
+        radius: BALL_RADIUS,
     };
 
     let mut transform = Transform::default();
