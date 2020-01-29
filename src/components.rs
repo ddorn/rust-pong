@@ -41,3 +41,13 @@ impl Component for Ball {
     type Storage = DenseVecStorage<Self>;
 }
 
+
+#[derive(Default)]
+pub struct Score {
+    pub left: i32,
+    pub right: i32
+}
+
+impl Component for Score {
+    type Storage = DenseVecStorage<Self>;
+}

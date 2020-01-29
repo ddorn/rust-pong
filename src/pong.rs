@@ -2,9 +2,11 @@ use amethyst::{
     assets::{AssetStorage, Loader, Handle},
     core::{transform::Transform, timing::Time},
     prelude::*,
+    ecs::prelude::{Entity},
+    ui::{Anchor, TtfFormat, UiText, UiTransform},
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
 };
-use crate::components::{Paddle, Side, Ball};
+use crate::components::{Paddle, Side, Ball, Score};
 
 
 pub const ARENA_HEIGHT: f32 = 100.0;
@@ -22,6 +24,13 @@ pub struct Pong {
     sprite_sheet_handle: Option<Handle<SpriteSheet>>,
 }
 
+/// ScoreText contains the ui text components that display the score
+pub struct ScoreText {
+    pub left: Entity,
+    pub right: Entity,
+}
+
+
 impl SimpleState for Pong {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
@@ -32,6 +41,7 @@ impl SimpleState for Pong {
 
         initialise_camera(world);
         initialise_paddles(world, self.sprite_sheet_handle.clone().unwrap());
+        initialise_scoreboard(world)
     }
 
     fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
@@ -141,4 +151,44 @@ fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
         .with(transform)
         .with(sprite_render)
         .build();
+}
+
+fn initialise_scoreboard(world: &mut World) {
+    let font_handle = world.read_resource::<Loader>().load(
+        "fonts/square.ttf",
+        TtfFormat,
+        (),
+        &world.read_resource(),
+    );
+    let p1_transform = UiTransform::new(
+        "P1".to_string(), Anchor::TopMiddle, Anchor::TopMiddle,
+        -50., -50., 1., 200., 50.,
+    );
+    let p2_transform = UiTransform::new(
+        "P2".to_string(), Anchor::TopMiddle, Anchor::TopMiddle,
+        50., -50., 1., 200., 50.,
+    );
+
+    let p1_score = world
+        .create_entity()
+        .with(p1_transform)
+        .with(UiText::new(
+            font_handle.clone(),
+            "0".to_string(),
+            [1., 1., 1., 1.],
+            50.,
+        )).build();
+
+    let p2_score = world
+        .create_entity()
+        .with(p2_transform)
+        .with(UiText::new(
+            font_handle.clone(),
+            "0".to_string(),
+            [1., 1., 1., 1.],
+            50.,
+        )).build();
+
+    world.insert(ScoreText { left: p1_score, right: p2_score });
+
 }

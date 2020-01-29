@@ -2,7 +2,7 @@ use amethyst::core::{Transform, SystemDesc};
 use amethyst::derive::SystemDesc;
 use amethyst::ecs::{Join, ReadStorage, System, SystemData, World, WriteStorage};
 use crate::components::{Ball, Paddle, Side};
-use crate::pong::{ARENA_HEIGHT, ARENA_WIDTH};
+use crate::pong::{ARENA_HEIGHT};
 
 #[derive(SystemDesc)]
 pub struct BounceBallsSystem;
@@ -24,12 +24,6 @@ impl<'s> System<'s> for BounceBallsSystem {
                 || (y > ARENA_HEIGHT - r && ball.velocity[1] > 0.0)
             {
                 ball.velocity[1] *= -1.0;
-            }
-
-            if (x < r && ball.velocity[0] < 0.0)
-                || (x > ARENA_WIDTH - r && ball.velocity[0] > 0.0)
-            {
-                ball.velocity[0] *= -1.0;
             }
 
             for (paddle, position) in (&paddles, &transforms).join() {
