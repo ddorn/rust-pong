@@ -1,6 +1,6 @@
 use amethyst::{
     assets::{AssetStorage, Loader, Handle},
-    core::transform::Transform,
+    core::{transform::Transform, timing::Time},
     prelude::*,
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
 };
@@ -14,19 +14,40 @@ pub const PADDLE_HEIGHT: f32 = 16.0;
 pub const PADDLE_WIDTH: f32 = 4.0;
 
 pub const BALL_RADIUS: f32 = 2.0;
-pub const BALL_VELOCITY: [f32; 2] = [30.0, 20.0];
+pub const BALL_VELOCITY: [f32; 2] = [150.0, 90.0];
 
-pub struct Pong;
+#[derive(Default)]
+pub struct Pong {
+    ball_spawn_timer: Option<f32>,
+    sprite_sheet_handle: Option<Handle<SpriteSheet>>,
+}
 
 impl SimpleState for Pong {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
 
-        let sprite_sheet = load_sprite_sheet(world);
+        // Wait one second before spawning the ball.
+        self.ball_spawn_timer.replace(1.0);
+        self.sprite_sheet_handle.replace(load_sprite_sheet(world));
 
         initialise_camera(world);
-        initialise_paddles(world, sprite_sheet.clone());
-        initialise_ball(world, sprite_sheet);
+        initialise_paddles(world, self.sprite_sheet_handle.clone().unwrap());
+    }
+
+    fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
+
+        if let Some(mut timer) = self.ball_spawn_timer.take() {
+            // Subtract the elapsed time
+            timer -= data.world.fetch::<Time>().delta_seconds();
+
+            if timer <= 0.0 {
+                initialise_ball(data.world, self.sprite_sheet_handle.clone().unwrap());
+            } else {
+                self.ball_spawn_timer.replace(timer);
+            }
+        }
+
+        Trans::None
     }
 }
 

@@ -25,6 +25,7 @@ impl<'s> System<'s> for PaddleSystem {
             };
 
             if let Some(mv_amount) = movement {
+                let mv_amount = 3.0 * mv_amount;
                 if mv_amount != 0.0 {
                     let y = transform.translation().y;
 
