@@ -18,7 +18,7 @@ mod config;
 mod systems;
 mod components;
 use crate::pong::Pong;
-use crate::config::ArenaConfig;
+use crate::config::PongConfig;
 
 fn main() -> amethyst::Result<()> {
     // Start the default logger to see errors and warnings
@@ -66,10 +66,13 @@ fn main() -> amethyst::Result<()> {
               "winner_system",
               &["bounce_balls_system"]);
 
+    let config = PongConfig::load(config_path);
+
     let mut game = Application::build(
         assets_dir,
         Pong::default())?
-        .with_resource(ArenaConfig::load(config_path))
+        .with_resource(config.arena)
+        .with_resource(config.ball)
         .build(game_data)?;
 
     game.run();
