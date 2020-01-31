@@ -7,10 +7,8 @@ use amethyst::{
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
 };
 use crate::components::{Paddle, Side, Ball};
-use crate::config::{ArenaConfig, PaddleConfig};
+use crate::config::{ArenaConfig, PaddleConfig, BallConfig};
 
-pub const BALL_RADIUS: f32 = 2.0;
-pub const BALL_VELOCITY: [f32; 2] = [150.0, 90.0];
 
 #[derive(Default)]
 pub struct Pong {
@@ -149,10 +147,11 @@ fn load_sprite_sheet(world: &mut World) -> Handle<SpriteSheet> {
 
 fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
     let arena = world.fetch::<ArenaConfig>();
+    let ball_config = world.fetch::<BallConfig>();
 
     let ball = Ball {
-        velocity: BALL_VELOCITY,
-        radius: BALL_RADIUS,
+        velocity: [1.0 * ball_config.speed, 0.5*ball_config.speed],
+        radius: ball_config.radius,
     };
 
     let mut transform = Transform::default();
@@ -165,6 +164,7 @@ fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
 
     // So we can borrow the world mutably to create the entity
     drop(arena);
+    drop(ball_config);
 
     world
         .create_entity()
