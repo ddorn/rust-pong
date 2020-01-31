@@ -1,4 +1,15 @@
-arena: (
-    width: 100.0,
-    height: 100.0
+(
+    ball: (
+        radius: 2.0,
+        speed: 90.0,
+    ),
+    arena: (
+        width: 100.0,
+        height: 100.0,
+    ),
+    paddles: (
+        width: 4.0,
+        height: 16.0,
+        speed: 50.0,
+    )
 )

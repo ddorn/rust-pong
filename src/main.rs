@@ -73,6 +73,7 @@ fn main() -> amethyst::Result<()> {
         Pong::default())?
         .with_resource(config.arena)
         .with_resource(config.ball)
+        .with_resource(config.paddles)
         .build(game_data)?;
 
     game.run();

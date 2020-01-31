@@ -4,7 +4,6 @@ use amethyst::derive::SystemDesc;
 use amethyst::ecs::{Join, Read, ReadStorage, System, SystemData, World, WriteStorage};
 use amethyst::input::{InputHandler, StringBindings};
 
-use crate::pong::PADDLE_HEIGHT;
 use crate::components::{Paddle, Side};
 use crate::config::ArenaConfig;
 
@@ -38,8 +37,8 @@ impl<'s> System<'s> for PaddleSystem {
 
                     transform.set_translation_y(
                         (y + mv_amount)
-                            .max(PADDLE_HEIGHT * 0.5)
-                            .min(arena.height - PADDLE_HEIGHT * 0.5)
+                            .max(paddle.height * 0.5)
+                            .min(arena.height - paddle.height * 0.5)
                     );
                 }
             }

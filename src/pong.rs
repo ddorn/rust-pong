@@ -7,10 +7,7 @@ use amethyst::{
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
 };
 use crate::components::{Paddle, Side, Ball};
-use crate::config::ArenaConfig;
-
-pub const PADDLE_HEIGHT: f32 = 16.0;
-pub const PADDLE_WIDTH: f32 = 4.0;
+use crate::config::{ArenaConfig, PaddleConfig};
 
 pub const BALL_RADIUS: f32 = 2.0;
 pub const BALL_VELOCITY: [f32; 2] = [150.0, 90.0];
@@ -62,14 +59,15 @@ impl SimpleState for Pong {
 /// Initialises one paddle on the left, and one paddle on the right.
 fn initialise_paddles(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
     let arena = world.fetch::<ArenaConfig>();
+    let paddles = world.fetch::<PaddleConfig>();
 
     let mut left_transform = Transform::default();
     let mut right_transform = Transform::default();
 
     // Correctly position the paddles.
     let y = arena.height / 2.0;
-    left_transform.set_translation_xyz(PADDLE_WIDTH * 0.5, y, 0.0);
-    right_transform.set_translation_xyz(arena.width - PADDLE_WIDTH * 0.5, y, 0.0);
+    left_transform.set_translation_xyz(paddles.width * 0.5, y, 0.0);
+    right_transform.set_translation_xyz(arena.width - paddles.width * 0.5, y, 0.0);
 
     // Assign the sprites for the paddles
     let sprite_render = SpriteRender {
@@ -77,13 +75,25 @@ fn initialise_paddles(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
         sprite_number: 0, // paddle is the first sprite in the sprite_sheet
     };
 
+    let left_paddle = Paddle {
+        side: Side::Left,
+        width: paddles.width,
+        height: paddles.height
+    };
+    let right_paddle = Paddle {
+        side: Side::Right,
+        width: paddles.width,
+        height: paddles.height
+    };
+
     // So we can borrow the world mutably to create the entity
     drop(arena);
+    drop(paddles);
 
     // Create a left plank entity.
     world
         .create_entity()
-        .with(Paddle::new(Side::Left))
+        .with(left_paddle)
         .with(left_transform)
         .with(sprite_render.clone())
         .build();
@@ -91,7 +101,7 @@ fn initialise_paddles(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
     // Create right plank entity.
     world
         .create_entity()
-        .with(Paddle::new(Side::Right))
+        .with(right_paddle)
         .with(right_transform)
         .with(sprite_render.clone())
         .build();

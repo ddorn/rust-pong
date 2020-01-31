@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 pub struct PongConfig {
     pub arena: ArenaConfig,
     pub ball: BallConfig,
+    pub paddles: PaddleConfig,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
