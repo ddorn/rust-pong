@@ -6,11 +6,8 @@ use amethyst::{
     ui::{Anchor, TtfFormat, UiText, UiTransform},
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
 };
-use crate::components::{Paddle, Side, Ball, Score};
-
-
-pub const ARENA_HEIGHT: f32 = 100.0;
-pub const ARENA_WIDTH: f32 = 100.0;
+use crate::components::{Paddle, Side, Ball};
+use crate::config::ArenaConfig;
 
 pub const PADDLE_HEIGHT: f32 = 16.0;
 pub const PADDLE_WIDTH: f32 = 4.0;
@@ -64,19 +61,24 @@ impl SimpleState for Pong {
 
 /// Initialises one paddle on the left, and one paddle on the right.
 fn initialise_paddles(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
+    let arena = world.fetch::<ArenaConfig>();
+
     let mut left_transform = Transform::default();
     let mut right_transform = Transform::default();
 
     // Correctly position the paddles.
-    let y = ARENA_HEIGHT / 2.0;
+    let y = arena.height / 2.0;
     left_transform.set_translation_xyz(PADDLE_WIDTH * 0.5, y, 0.0);
-    right_transform.set_translation_xyz(ARENA_WIDTH - PADDLE_WIDTH * 0.5, y, 0.0);
+    right_transform.set_translation_xyz(arena.width - PADDLE_WIDTH * 0.5, y, 0.0);
 
     // Assign the sprites for the paddles
     let sprite_render = SpriteRender {
         sprite_sheet: sprite_sheet.clone(),
         sprite_number: 0, // paddle is the first sprite in the sprite_sheet
     };
+
+    // So we can borrow the world mutably to create the entity
+    drop(arena);
 
     // Create a left plank entity.
     world
@@ -96,12 +98,17 @@ fn initialise_paddles(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
 }
 
 fn initialise_camera(world: &mut World) {
+    let (width, height) = {
+        let arena = world.fetch::<ArenaConfig>();
+        (arena.width, arena.height)
+    };
+
     // Setup camera in a way that our screen covers whole arena and (0, 0) is in the bottom left.
     let mut transform = Transform::default();
-    transform.set_translation_xyz(ARENA_WIDTH * 0.5, ARENA_HEIGHT * 0.5, 1.0);
+    transform.set_translation_xyz(width * 0.5, height * 0.5, 1.0);
 
     world.create_entity()
-        .with(Camera::standard_2d(ARENA_WIDTH, ARENA_HEIGHT))
+        .with(Camera::standard_2d(width, height))
         .with(transform)
         .build();
 }
@@ -131,6 +138,7 @@ fn load_sprite_sheet(world: &mut World) -> Handle<SpriteSheet> {
 }
 
 fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
+    let arena = world.fetch::<ArenaConfig>();
 
     let ball = Ball {
         velocity: BALL_VELOCITY,
@@ -138,12 +146,15 @@ fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
     };
 
     let mut transform = Transform::default();
-    transform.set_translation_xyz(ARENA_WIDTH * 0.5, ARENA_HEIGHT * 0.5, 0.0);
+    transform.set_translation_xyz(arena.width * 0.5, arena.height * 0.5, 0.0);
 
     let sprite_render = SpriteRender {
         sprite_sheet,
         sprite_number: 1
     };
+
+    // So we can borrow the world mutably to create the entity
+    drop(arena);
 
     world
         .create_entity()

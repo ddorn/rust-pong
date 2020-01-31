@@ -7,3 +7,6 @@ edition = "2018"
 [dependencies.amethyst]
 version = "0.13"
 features = ["vulkan"]
+
+[dependencies]
+serde = "1.0.104"

@@ -14,18 +14,22 @@ use amethyst::{
 };
 
 mod pong;
+mod config;
 mod systems;
 mod components;
 use crate::pong::Pong;
+use crate::config::ArenaConfig;
 
 fn main() -> amethyst::Result<()> {
     // Start the default logger to see errors and warnings
     amethyst::start_logger(Default::default());
 
     let app_root = application_root_dir()?;
-    let display_config_path = app_root.join("config").join("display.ron");
+    let config_dir = app_root.join("config");
     let assets_dir = app_root.join("assets");
-    let bindings_path = app_root.join("config").join("bindings.ron");
+    let display_config_path = config_dir.join("display.ron");
+    let bindings_path = config_dir.join("bindings.ron");
+    let config_path = config_dir.join("config.ron");
 
     let game_data = GameDataBuilder::default()
         .with_bundle(
@@ -62,9 +66,12 @@ fn main() -> amethyst::Result<()> {
               "winner_system",
               &["bounce_balls_system"]);
 
-    let mut game = Application::new(assets_dir,
-                                    Pong::default(),
-                                    game_data)?;
+    let mut game = Application::build(
+        assets_dir,
+        Pong::default())?
+        .with_resource(ArenaConfig::load(config_path))
+        .build(game_data)?;
+
     game.run();
 
     Ok(())

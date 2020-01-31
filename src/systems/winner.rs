@@ -1,9 +1,10 @@
 use amethyst::core::{Transform, SystemDesc};
 use amethyst::derive::SystemDesc;
-use amethyst::ecs::{Join, Write, System, SystemData, World, WriteStorage, ReadStorage, ReadExpect};
+use amethyst::ecs::prelude::*;
 use amethyst::ui::UiText;
 use crate::components::{Ball, Score};
-use crate::pong::{ARENA_WIDTH, ScoreText};
+use crate::pong::ScoreText;
+use crate::config::ArenaConfig;
 
 
 #[derive(SystemDesc)]
@@ -11,6 +12,7 @@ pub struct WinnerSystem;
 
 impl<'s> System<'s> for WinnerSystem {
     type SystemData = (
+        Read<'s, ArenaConfig>,
         WriteStorage<'s, Ball>,
         ReadStorage<'s, Transform>,
         Write<'s, Score>,
@@ -18,12 +20,13 @@ impl<'s> System<'s> for WinnerSystem {
         ReadExpect<'s, ScoreText>,
     );
 
-    fn run(&mut self, (
-        mut balls,
-        transforms,
-        mut score,
-        mut ui_text,
-        score_text): Self::SystemData) {
+    fn run(&mut self, data: Self::SystemData) {
+        let (arena,
+            mut balls,
+            transforms,
+            mut score,
+            mut ui_text,
+            score_text) = data;
 
         for (ball, transform) in (&mut balls, &transforms).join() {
             if transform.translation().x < 0.0 && ball.velocity[0] < 0.0 {
@@ -33,7 +36,7 @@ impl<'s> System<'s> for WinnerSystem {
                 if let Some(text) = ui_text.get_mut(score_text.right) {
                     text.text = score.right.to_string();
                 }
-            } else if transform.translation().x > ARENA_WIDTH && ball.velocity[0] > 0.0 {
+            } else if transform.translation().x > arena.width && ball.velocity[0] > 0.0 {
                 score.left += 1;
                 ball.velocity[0] *= -1.0;
 

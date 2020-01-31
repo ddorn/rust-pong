@@ -4,20 +4,27 @@ use amethyst::derive::SystemDesc;
 use amethyst::ecs::{Join, Read, ReadStorage, System, SystemData, World, WriteStorage};
 use amethyst::input::{InputHandler, StringBindings};
 
-use crate::pong::{ARENA_HEIGHT, PADDLE_HEIGHT};
+use crate::pong::PADDLE_HEIGHT;
 use crate::components::{Paddle, Side};
+use crate::config::ArenaConfig;
 
 #[derive(SystemDesc)]
 pub struct PaddleSystem;
 
 impl<'s> System<'s> for PaddleSystem {
     type SystemData = (
+        Read<'s, ArenaConfig>,
         WriteStorage<'s, Transform>,
         ReadStorage<'s, Paddle>,
         Read<'s, InputHandler<StringBindings>>,
     );
 
-    fn run(&mut self, (mut transforms, paddles, input): Self::SystemData) {
+    fn run(&mut self, data: Self::SystemData) {
+        let (arena,
+            mut transforms,
+            paddles,
+            input) = data;
+
         for (paddle, transform) in (&paddles, &mut transforms).join() {
             let movement = match paddle.side {
                 Side::Left => input.axis_value("left_paddle"),
@@ -32,7 +39,7 @@ impl<'s> System<'s> for PaddleSystem {
                     transform.set_translation_y(
                         (y + mv_amount)
                             .max(PADDLE_HEIGHT * 0.5)
-                            .min(ARENA_HEIGHT - PADDLE_HEIGHT * 0.5)
+                            .min(arena.height - PADDLE_HEIGHT * 0.5)
                     );
                 }
             }
