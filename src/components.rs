@@ -1,5 +1,6 @@
 use amethyst::{
     ecs::prelude::{Component, DenseVecStorage},
+    core::math::Vector2,
 };
 
 
@@ -20,7 +21,7 @@ impl Component for Paddle {
 }
 
 pub struct Ball {
-    pub velocity: [f32; 2],
+    pub velocity: Vector2<f32>,
     pub radius: f32,
 }
 

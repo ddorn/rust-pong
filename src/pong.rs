@@ -1,6 +1,8 @@
 use amethyst::{
     assets::{AssetStorage, Loader, Handle},
-    core::{transform::Transform, timing::Time},
+    core::{transform::Transform,
+           timing::Time,
+           math::Vector2},
     prelude::*,
     ecs::prelude::{Entity},
     ui::{Anchor, TtfFormat, UiText, UiTransform},
@@ -8,6 +10,8 @@ use amethyst::{
 };
 use crate::components::{Paddle, Side, Ball};
 use crate::config::{ArenaConfig, PaddleConfig, BallConfig};
+use rand::Rng;
+use std::f32::consts::PI;
 
 
 #[derive(Default)]
@@ -149,8 +153,15 @@ fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
     let arena = world.fetch::<ArenaConfig>();
     let ball_config = world.fetch::<BallConfig>();
 
+    let mut angle = rand::thread_rng().gen_range(-PI / 4.0, PI / 4.0);
+    if rand::random() {
+        // random starting player
+        angle *= -1.0;
+    }
+
+    let velocity = Vector2::new(angle.cos(), angle.sin()) * ball_config.speed;
     let ball = Ball {
-        velocity: [1.0 * ball_config.speed, 0.5*ball_config.speed],
+        velocity: velocity,
         radius: ball_config.radius,
     };
 
