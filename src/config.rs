@@ -18,6 +18,8 @@ pub struct ArenaConfig {
 pub struct BallConfig {
     pub radius: f32,
     pub speed: f32,
+    pub bounce_acceleration: f32,
+    pub max_speed: f32,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -38,7 +40,12 @@ impl Default for ArenaConfig {
 
 impl Default for BallConfig {
     fn default() -> Self {
-        BallConfig { radius: 2.0, speed: 90.0 }
+        BallConfig {
+            radius: 2.0,
+            speed: 90.0,
+            bounce_acceleration: 2.0,
+            max_speed: 400.0,
+        }
     }
 }
 

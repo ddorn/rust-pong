@@ -2,7 +2,7 @@ use amethyst::core::{Transform, SystemDesc};
 use amethyst::derive::SystemDesc;
 use amethyst::ecs::{Join, Read, ReadStorage, System, SystemData, World, WriteStorage};
 use crate::components::{Ball, Paddle, Side};
-use crate::config::ArenaConfig;
+use crate::config::{ArenaConfig, BallConfig};
 
 #[derive(SystemDesc)]
 pub struct BounceBallsSystem;
@@ -10,6 +10,7 @@ pub struct BounceBallsSystem;
 impl<'s> System<'s> for BounceBallsSystem {
     type SystemData = (
         Read<'s, ArenaConfig>,
+        Read<'s, BallConfig>,
         WriteStorage<'s, Ball>,
         ReadStorage<'s, Transform>,
         ReadStorage<'s, Paddle>
@@ -17,6 +18,7 @@ impl<'s> System<'s> for BounceBallsSystem {
 
     fn run(&mut self, data: Self::SystemData) {
         let (arena,
+            balls_config,
             mut balls,
             transforms,
             paddles) = data;
@@ -50,7 +52,12 @@ impl<'s> System<'s> for BounceBallsSystem {
                 ) {
                     if (paddle.side == Side::Left && ball.direction[0] < 0.0)
                         || (paddle.side == Side::Right && ball.direction[0] > 0.0) {
+                        // Reverse the x direction after bounce
                         ball.direction[0] *= -1.0;
+                        // And accelerate the ball linearly
+                        ball.speed += balls_config.bounce_acceleration;
+                        // Cap the speed though
+                        ball.speed = ball.speed.min(balls_config.max_speed);
                     }
                 }
             }
