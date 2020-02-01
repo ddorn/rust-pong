@@ -2,7 +2,7 @@
     ball: (
         radius: 2.0,
         speed: 120.0,
-        bounce_acceleration: 5.0,
+        bounce_acceleration: 3.0,
         max_speed: 420.0,
     ),
     arena: (
@@ -12,6 +12,6 @@
     paddles: (
         width: 4.0,
         height: 16.0,
-        speed: 50.0,
+        speed: 180.0,
     )
 )
