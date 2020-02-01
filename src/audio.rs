@@ -20,9 +20,9 @@ fn load_audio_track(loader: &Loader, world: &World, file: &str) -> SourceHandle 
     loader.load(file, OggFormat, (), &world.read_resource())
 }
 
-pub fn play_bounce_sound(sounds: &Sounds, storage: &AssetStorage<Source>, output: Option<&Output>) {
+pub fn play_sound(sound: &SourceHandle, storage: &AssetStorage<Source>, output: Option<&Output>) {
     if let Some(ref output) = output.as_ref() {
-        if let Some(sound) = storage.get(&sounds.bounce_sfx) {
+        if let Some(sound) = storage.get(&sound) {
             output.play_once(sound, 1.0);
         }
     }

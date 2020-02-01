@@ -11,7 +11,7 @@ use amethyst::{
 
 use crate::components::{Ball, Paddle, Side};
 use crate::config::{ArenaConfig, BallConfig};
-use crate::audio::{Sounds, play_bounce_sound};
+use crate::audio::{Sounds, play_sound};
 
 #[derive(SystemDesc)]
 pub struct BounceBallsSystem;
@@ -89,7 +89,7 @@ impl<'s> System<'s> for BounceBallsSystem {
                         ball.speed = ball.speed.min(balls_config.max_speed);
 
                         // Play bounce sound
-                        play_bounce_sound(&sounds, &storage, audio_output.as_ref().map(|o| o.deref()));
+                        play_sound(&sounds.bounce_sfx, &storage, audio_output.as_ref().map(|o| o.deref()));
                     }
                 }
             }
