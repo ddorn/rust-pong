@@ -1,9 +1,17 @@
-use amethyst::core::{Transform, SystemDesc, math::Vector2};
-use amethyst::derive::SystemDesc;
-use amethyst::ecs::{Join, Read, ReadStorage, System, SystemData, World, WriteStorage};
+use std::f32::consts::PI;
+use std::ops::Deref;
+
+use amethyst::{
+    ecs::prelude::*,
+    core::{Transform, SystemDesc, math::Vector2},
+    derive::SystemDesc,
+    audio::{output::Output, Source},
+    assets::AssetStorage,
+};
+
 use crate::components::{Ball, Paddle, Side};
 use crate::config::{ArenaConfig, BallConfig};
-use std::f32::consts::PI;
+use crate::audio::{Sounds, play_bounce_sound};
 
 #[derive(SystemDesc)]
 pub struct BounceBallsSystem;
@@ -14,15 +22,23 @@ impl<'s> System<'s> for BounceBallsSystem {
         Read<'s, BallConfig>,
         WriteStorage<'s, Ball>,
         ReadStorage<'s, Transform>,
-        ReadStorage<'s, Paddle>
+        ReadStorage<'s, Paddle>,
+        Read<'s, AssetStorage<Source>>,
+        ReadExpect<'s, Sounds>,
+        Option<Read<'s, Output>>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (arena,
+        let (
+            arena,
             balls_config,
             mut balls,
             transforms,
-            paddles) = data;
+            paddles,
+            storage,
+            sounds,
+            audio_output,
+        ) = data;
 
         for (ball, transform) in (&mut balls, &transforms).join() {
             let x: f32 = transform.translation().x;
@@ -71,6 +87,9 @@ impl<'s> System<'s> for BounceBallsSystem {
                         ball.speed += balls_config.bounce_acceleration;
                         // Cap the speed though
                         ball.speed = ball.speed.min(balls_config.max_speed);
+
+                        // Play bounce sound
+                        play_bounce_sound(&sounds, &storage, audio_output.as_ref().map(|o| o.deref()));
                     }
                 }
             }

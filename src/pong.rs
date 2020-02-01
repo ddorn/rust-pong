@@ -12,6 +12,7 @@ use crate::components::{Paddle, Side, Ball};
 use crate::config::{ArenaConfig, PaddleConfig, BallConfig};
 use rand::Rng;
 use std::f32::consts::PI;
+use crate::audio::initialise_audio;
 
 
 #[derive(Default)]
@@ -37,7 +38,8 @@ impl SimpleState for Pong {
 
         initialise_camera(world);
         initialise_paddles(world, self.sprite_sheet_handle.clone().unwrap());
-        initialise_scoreboard(world)
+        initialise_scoreboard(world);
+        initialise_audio(world);
     }
 
     fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {

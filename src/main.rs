@@ -10,10 +10,12 @@ use amethyst::{
     ui::{RenderUi, UiBundle},
     core::transform::TransformBundle,
     utils::application_root_dir,
-    input::{InputBundle, StringBindings}
+    input::{InputBundle, StringBindings},
+    audio::AudioBundle,
 };
 
 mod pong;
+mod audio;
 mod config;
 mod systems;
 mod components;
@@ -52,6 +54,9 @@ fn main() -> amethyst::Result<()> {
         )?
         .with_bundle(
             UiBundle::<StringBindings>::new()
+        )?
+        .with_bundle(
+            AudioBundle::default()
         )?
         .with(systems::PaddleSystem,
               "paddle_system",
