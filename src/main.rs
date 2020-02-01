@@ -11,7 +11,7 @@ use amethyst::{
     core::transform::TransformBundle,
     utils::application_root_dir,
     input::{InputBundle, StringBindings},
-    audio::AudioBundle,
+    audio::{AudioBundle, DjSystemDesc},
 };
 
 mod pong;
@@ -20,6 +20,7 @@ mod config;
 mod systems;
 mod components;
 use crate::pong::Pong;
+use crate::audio::Music;
 use crate::config::PongConfig;
 
 fn main() -> amethyst::Result<()> {
@@ -58,6 +59,11 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(
             AudioBundle::default()
         )?
+        .with_system_desc(
+            DjSystemDesc::new(|music: &mut Music| music.music.next()),
+            "dj_system",
+            &[],
+        )
         .with(systems::PaddleSystem,
               "paddle_system",
               &["input_system"])
