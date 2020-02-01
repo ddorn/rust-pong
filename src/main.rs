@@ -75,7 +75,10 @@ fn main() -> amethyst::Result<()> {
               &["paddle_system", "move_balls_system"])
         .with(systems::WinnerSystem,
               "winner_system",
-              &["bounce_balls_system"]);
+              &["bounce_balls_system"])
+        .with(systems::SoundEffectsSystem,
+              "sound_effects_system",
+              &[]);
 
     let config = PongConfig::load(config_path);
 

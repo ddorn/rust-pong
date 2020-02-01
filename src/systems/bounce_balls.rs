@@ -1,17 +1,14 @@
 use std::f32::consts::PI;
-use std::ops::Deref;
 
 use amethyst::{
     ecs::prelude::*,
     core::{Transform, SystemDesc, math::Vector2},
     derive::SystemDesc,
-    audio::{output::Output, Source},
-    assets::AssetStorage,
 };
 
 use crate::components::{Ball, Paddle, Side};
 use crate::config::{ArenaConfig, BallConfig};
-use crate::audio::{Sounds, play_sound};
+use crate::audio::{SoundQueue, Sound};
 
 #[derive(SystemDesc)]
 pub struct BounceBallsSystem;
@@ -23,9 +20,7 @@ impl<'s> System<'s> for BounceBallsSystem {
         WriteStorage<'s, Ball>,
         ReadStorage<'s, Transform>,
         ReadStorage<'s, Paddle>,
-        Read<'s, AssetStorage<Source>>,
-        ReadExpect<'s, Sounds>,
-        Option<Read<'s, Output>>,
+        Write<'s, SoundQueue>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
@@ -35,9 +30,7 @@ impl<'s> System<'s> for BounceBallsSystem {
             mut balls,
             transforms,
             paddles,
-            storage,
-            sounds,
-            audio_output,
+            mut sound_queue,
         ) = data;
 
         for (ball, transform) in (&mut balls, &transforms).join() {
@@ -88,8 +81,7 @@ impl<'s> System<'s> for BounceBallsSystem {
                         // Cap the speed though
                         ball.speed = ball.speed.min(balls_config.max_speed);
 
-                        // Play bounce sound
-                        play_sound(&sounds.bounce_sfx, &storage, audio_output.as_ref().map(|o| o.deref()));
+                        sound_queue.push(Sound::Bounce);
                     }
                 }
             }

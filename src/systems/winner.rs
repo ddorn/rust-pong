@@ -1,14 +1,11 @@
-use std::ops::Deref;
 use amethyst::core::{Transform, SystemDesc};
 use amethyst::derive::SystemDesc;
 use amethyst::ecs::prelude::*;
 use amethyst::ui::UiText;
-use amethyst::audio::{output::Output, Source};
-use amethyst::assets::AssetStorage;
 use crate::components::{Ball, Score};
 use crate::pong::ScoreText;
 use crate::config::ArenaConfig;
-use crate::audio::{play_sound, Sounds};
+use crate::audio::{SoundQueue, Sound};
 
 
 #[derive(SystemDesc)]
@@ -24,9 +21,7 @@ impl<'s> System<'s> for WinnerSystem {
         WriteStorage<'s, UiText>,
         ReadExpect<'s, ScoreText>,
         // Sound
-        Read<'s, AssetStorage<Source>>,
-        ReadExpect<'s, Sounds>,
-        Option<Read<'s, Output>>,
+        Write<'s, SoundQueue>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
@@ -37,9 +32,7 @@ impl<'s> System<'s> for WinnerSystem {
             mut score,
             mut ui_text,
             score_text,
-            storage,
-            sounds,
-            audio_output,
+            mut sound_queue,
         ) = data;
 
         for (ball, transform) in (&mut balls, &transforms).join() {
@@ -60,7 +53,7 @@ impl<'s> System<'s> for WinnerSystem {
             }
 
             ball.direction[0] *= -1.0;
-            play_sound(&sounds.score_sfx, &storage, audio_output.as_ref().map(|o| o.deref()));
+            sound_queue.push(Sound::Score);
         }
 
     }

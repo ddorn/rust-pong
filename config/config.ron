@@ -1,7 +1,7 @@
 (
     ball: (
         radius: 2.0,
-        speed: 120.0,
+        speed: 20.0,
         bounce_acceleration: 3.0,
         max_speed: 420.0,
     ),

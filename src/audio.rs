@@ -14,6 +14,12 @@ const MUSIC_TRACKS: &[&str] = &[
     "audio/albatross.ogg",
 ];
 
+#[derive(Debug, Copy, Clone)]
+pub enum Sound {
+    Score,
+    Bounce,
+}
+
 pub struct Sounds {
     pub score_sfx: SourceHandle,
     pub bounce_sfx: SourceHandle,
@@ -24,6 +30,26 @@ pub struct Music {
     pub music: Cycle<IntoIter<SourceHandle>>,
 }
 
+
+#[derive(Default)]
+pub struct SoundQueue {
+    pub to_play: Vec<Sound>,
+}
+
+impl<'a> Sounds {
+    pub fn get(&'a self, sound: Sound) -> &'a SourceHandle {
+        match sound {
+            Sound::Score => &self.score_sfx,
+            Sound::Bounce => &self.bounce_sfx,
+        }
+    }
+}
+
+impl SoundQueue {
+    pub fn push(&mut self, sound: Sound) {
+        self.to_play.push(sound);
+    }
+}
 
 /// Loads an ogg audio track.
 fn load_audio_track(loader: &Loader, world: &World, file: &str) -> SourceHandle {
@@ -63,6 +89,7 @@ pub fn initialise_audio(world: &mut World) {
 
     // Add sound effects to the world. We have to do this in another scope because
     // world won't let us insert new resources as long as `Loader` is borrowed.
+    world.insert(SoundQueue { to_play: vec![] });
     world.insert(sound_effects);
     world.insert(music);
 }
