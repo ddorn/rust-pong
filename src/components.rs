@@ -21,7 +21,8 @@ impl Component for Paddle {
 }
 
 pub struct Ball {
-    pub velocity: Vector2<f32>,
+    pub direction: Vector2<f32>,
+    pub speed: f32,
     pub radius: f32,
 }
 

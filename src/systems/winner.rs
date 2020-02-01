@@ -29,16 +29,16 @@ impl<'s> System<'s> for WinnerSystem {
             score_text) = data;
 
         for (ball, transform) in (&mut balls, &transforms).join() {
-            if transform.translation().x < 0.0 && ball.velocity[0] < 0.0 {
+            if transform.translation().x < 0.0 && ball.direction[0] < 0.0 {
                 score.right += 1;
-                ball.velocity[0] *= -1.0;
+                ball.direction[0] *= -1.0;
 
                 if let Some(text) = ui_text.get_mut(score_text.right) {
                     text.text = score.right.to_string();
                 }
-            } else if transform.translation().x > arena.width && ball.velocity[0] > 0.0 {
+            } else if transform.translation().x > arena.width && ball.direction[0] > 0.0 {
                 score.left += 1;
-                ball.velocity[0] *= -1.0;
+                ball.direction[0] *= -1.0;
 
 
                 if let Some(text) = ui_text.get_mut(score_text.left) {

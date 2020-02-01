@@ -159,9 +159,9 @@ fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
         angle *= -1.0;
     }
 
-    let velocity = Vector2::new(angle.cos(), angle.sin()) * ball_config.speed;
     let ball = Ball {
-        velocity: velocity,
+        direction: Vector2::new(angle.cos(), angle.sin()),
+        speed: ball_config.speed,
         radius: ball_config.radius,
     };
 

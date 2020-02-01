@@ -18,8 +18,8 @@ impl <'s> System<'s> for MoveBallsSystem {
 
     fn run(&mut self, (mut transforms, mut balls, time) : Self::SystemData) {
         for (transform, ball) in (&mut transforms, &mut balls).join() {
-            transform.prepend_translation_x(ball.velocity[0] * time.delta_seconds());
-            transform.prepend_translation_y(ball.velocity[1] * time.delta_seconds());
+            transform.prepend_translation_x(ball.direction[0] * ball.speed * time.delta_seconds());
+            transform.prepend_translation_y(ball.direction[1] * ball.speed * time.delta_seconds());
         }
     }
 }

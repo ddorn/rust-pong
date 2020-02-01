@@ -26,10 +26,10 @@ impl<'s> System<'s> for BounceBallsSystem {
             let y: f32 = transform.translation().y;
             let r: f32 = ball.radius;
 
-            if (y < r && ball.velocity[1] < 0.0)
-                || (y > arena.height - r && ball.velocity[1] > 0.0)
+            if (y < r && ball.direction[1] < 0.0)
+                || (y > arena.height - r && ball.direction[1] > 0.0)
             {
-                ball.velocity[1] *= -1.0;
+                ball.direction[1] *= -1.0;
             }
 
             for (paddle, position) in (&paddles, &transforms).join() {
@@ -48,9 +48,9 @@ impl<'s> System<'s> for BounceBallsSystem {
                     paddle_x + paddle.width / 2.0 + r,
                     paddle_y + paddle.height / 2.0 + r,
                 ) {
-                    if (paddle.side == Side::Left && ball.velocity[0] < 0.0)
-                        || (paddle.side == Side::Right && ball.velocity[0] > 0.0) {
-                        ball.velocity[0] *= -1.0;
+                    if (paddle.side == Side::Left && ball.direction[0] < 0.0)
+                        || (paddle.side == Side::Right && ball.direction[0] > 0.0) {
+                        ball.direction[0] *= -1.0;
                     }
                 }
             }
