@@ -74,9 +74,13 @@ fn initialise_paddles(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
     right_transform.set_translation_xyz(arena.width - paddles.width * 0.5, y, 0.0);
 
     // Assign the sprites for the paddles
-    let sprite_render = SpriteRender {
+    let left_sprite_render = SpriteRender {
         sprite_sheet: sprite_sheet.clone(),
         sprite_number: 0, // paddle is the first sprite in the sprite_sheet
+    };
+    let right_sprite_render = SpriteRender {
+        sprite_sheet: sprite_sheet.clone(),
+        sprite_number: 1, // paddle is the first sprite in the sprite_sheet
     };
 
     let left_paddle = Paddle {
@@ -99,7 +103,7 @@ fn initialise_paddles(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
         .create_entity()
         .with(left_paddle)
         .with(left_transform)
-        .with(sprite_render.clone())
+        .with(left_sprite_render)
         .build();
 
     // Create right plank entity.
@@ -107,7 +111,7 @@ fn initialise_paddles(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
         .create_entity()
         .with(right_paddle)
         .with(right_transform)
-        .with(sprite_render.clone())
+        .with(right_sprite_render)
         .build();
 }
 
@@ -172,7 +176,7 @@ fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
 
     let sprite_render = SpriteRender {
         sprite_sheet,
-        sprite_number: 1
+        sprite_number: 2
     };
 
     // So we can borrow the world mutably to create the entity
