@@ -15,6 +15,7 @@ use amethyst::{
 };
 
 mod pong;
+mod math;
 mod audio;
 mod config;
 mod systems;
@@ -67,18 +68,21 @@ fn main() -> amethyst::Result<()> {
         .with(systems::PaddleSystem,
               "paddle_system",
               &["input_system"])
-        .with(systems::MoveBallsSystem,
-              "move_balls_system",
+        .with(systems::MoveStraightSystem,
+              "move_straight",
               &["paddle_system"])
-        .with(systems::BounceBallsSystem,
+        .with(systems::PaddleBounceSystem,
               "bounce_balls_system",
-              &["paddle_system", "move_balls_system"])
+              &["paddle_system", "move_straight"])
         .with(systems::WinnerSystem,
               "winner_system",
-              &["bounce_balls_system"])
+              &["move_straight"])
         .with(systems::SoundEffectsSystem,
               "sound_effects_system",
-              &[]);
+              &[])
+        .with(systems::WallBounceSystem,
+              "wall_bounce",
+              &["move_straight"]);
 
     let config = PongConfig::load(config_path);
 

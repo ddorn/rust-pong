@@ -11,3 +11,4 @@ features = ["vulkan"]
 [dependencies]
 serde = "1.0.104"
 rand = "0.7.3"
+specs-derive = "0.4.0"

@@ -8,7 +8,7 @@ use amethyst::{
     ui::{Anchor, TtfFormat, UiText, UiTransform},
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
 };
-use crate::components::{Paddle, Side, Ball};
+use crate::components::{Paddle, Side, StraightMover, HitBox, WallBouncer};
 use crate::config::{ArenaConfig, PaddleConfig, BallConfig};
 use rand::Rng;
 use std::f32::consts::PI;
@@ -165,11 +165,12 @@ fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
         angle *= -1.0;
     }
 
-    let ball = Ball {
+    let ball = StraightMover {
         direction: Vector2::new(angle.cos(), angle.sin()),
         speed: ball_config.speed,
-        radius: ball_config.radius,
     };
+
+    let hit_box = HitBox { radius: ball_config.radius };
 
     let mut transform = Transform::default();
     transform.set_translation_xyz(arena.width * 0.5, arena.height * 0.5, 0.0);
@@ -186,8 +187,10 @@ fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
     world
         .create_entity()
         .with(ball)
+        .with(hit_box)
         .with(transform)
         .with(sprite_render)
+        .with(WallBouncer { vertical: false, horizontal: true })
         .build();
 }
 

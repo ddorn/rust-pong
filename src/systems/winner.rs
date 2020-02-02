@@ -2,7 +2,7 @@ use amethyst::core::{Transform, SystemDesc};
 use amethyst::derive::SystemDesc;
 use amethyst::ecs::prelude::*;
 use amethyst::ui::UiText;
-use crate::components::{Ball, Score};
+use crate::components::{StraightMover, Score};
 use crate::pong::ScoreText;
 use crate::config::ArenaConfig;
 use crate::audio::{SoundQueue, Sound};
@@ -14,7 +14,7 @@ pub struct WinnerSystem;
 impl<'s> System<'s> for WinnerSystem {
     type SystemData = (
         Read<'s, ArenaConfig>,
-        WriteStorage<'s, Ball>,
+        WriteStorage<'s, StraightMover>,
         ReadStorage<'s, Transform>,
         // Score and scoreboard
         Write<'s, Score>,
@@ -52,6 +52,9 @@ impl<'s> System<'s> for WinnerSystem {
                 continue
             }
 
+            // We don't put the ball back to the center
+            // Instead we just make it bounce
+            // to keep the speed of the game
             ball.direction[0] *= -1.0;
             sound_queue.push(Sound::Score);
         }
