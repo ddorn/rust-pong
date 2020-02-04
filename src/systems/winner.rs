@@ -1,12 +1,11 @@
-use amethyst::core::{Transform, SystemDesc};
+use crate::audio::{Sound, SoundQueue};
+use crate::components::{Ball, Score, StraightMover};
+use crate::config::ArenaConfig;
+use crate::pong::ScoreText;
+use amethyst::core::{SystemDesc, Transform};
 use amethyst::derive::SystemDesc;
 use amethyst::ecs::prelude::*;
 use amethyst::ui::UiText;
-use crate::components::{StraightMover, Score, Ball};
-use crate::pong::ScoreText;
-use crate::config::ArenaConfig;
-use crate::audio::{SoundQueue, Sound};
-
 
 #[derive(SystemDesc)]
 pub struct WinnerSystem;
@@ -37,21 +36,24 @@ impl<'s> System<'s> for WinnerSystem {
             mut sound_queue,
         ) = data;
 
-        for (ball, transform, _) in (&mut balls, &transforms, &ball_tags).join() {
+        for (ball, transform, _) in (&mut balls, &transforms, &ball_tags).join()
+        {
             if transform.translation().x < 0.0 && ball.direction[0] < 0.0 {
                 score.right += 1;
 
                 if let Some(text) = ui_text.get_mut(score_text.right) {
                     text.text = score.right.to_string();
                 }
-            } else if transform.translation().x > arena.width && ball.direction[0] > 0.0 {
+            } else if transform.translation().x > arena.width
+                && ball.direction[0] > 0.0
+            {
                 score.left += 1;
 
                 if let Some(text) = ui_text.get_mut(score_text.left) {
                     text.text = score.left.to_string();
                 }
             } else {
-                continue
+                continue;
             }
 
             // We don't put the ball back to the center
@@ -60,6 +62,5 @@ impl<'s> System<'s> for WinnerSystem {
             ball.direction[0] *= -1.0;
             sound_queue.push(Sound::Score);
         }
-
     }
 }

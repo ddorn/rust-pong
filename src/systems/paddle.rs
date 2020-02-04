@@ -1,7 +1,8 @@
-
-use amethyst::core::{Transform, SystemDesc, timing::Time};
+use amethyst::core::{timing::Time, SystemDesc, Transform};
 use amethyst::derive::SystemDesc;
-use amethyst::ecs::{Join, Read, ReadStorage, System, SystemData, World, WriteStorage};
+use amethyst::ecs::{
+    Join, Read, ReadStorage, System, SystemData, World, WriteStorage,
+};
 use amethyst::input::{InputHandler, StringBindings};
 
 use crate::components::{Paddle, Side};
@@ -21,12 +22,8 @@ impl<'s> System<'s> for PaddleSystem {
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (arena,
-            paddles_config,
-            time,
-            mut transforms,
-            paddles,
-            input) = data;
+        let (arena, paddles_config, time, mut transforms, paddles, input) =
+            data;
 
         for (paddle, transform) in (&paddles, &mut transforms).join() {
             let movement = match paddle.side {
@@ -35,14 +32,15 @@ impl<'s> System<'s> for PaddleSystem {
             };
 
             if let Some(mv_amount) = movement {
-                let mv_amount = mv_amount * paddles_config.speed * time.delta_seconds();
+                let mv_amount =
+                    mv_amount * paddles_config.speed * time.delta_seconds();
                 if mv_amount != 0.0 {
                     let y = transform.translation().y;
 
                     transform.set_translation_y(
                         (y + mv_amount)
                             .max(paddle.height * 0.5)
-                            .min(arena.height - paddle.height * 0.5)
+                            .min(arena.height - paddle.height * 0.5),
                     );
                 }
             }

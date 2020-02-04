@@ -1,9 +1,16 @@
-use std::f32::consts::PI;
-use rand::Rng;
 use amethyst::core::math::Vector2;
+use rand::Rng;
+use std::f32::consts::PI;
 
 /// Whether a point is included in a rectangle or on its border
-pub fn point_in_rect(x: f32, y: f32, left: f32, bottom: f32, right: f32, top: f32) -> bool {
+pub fn point_in_rect(
+    x: f32,
+    y: f32,
+    left: f32,
+    bottom: f32,
+    right: f32,
+    top: f32,
+) -> bool {
     left <= x && x <= right && bottom <= y && y <= top
 }
 
@@ -12,7 +19,6 @@ pub fn point_in_rect(x: f32, y: f32, left: f32, bottom: f32, right: f32, top: f3
 pub fn lerp(t: f32, a: f32, b: f32) -> f32 {
     (1.0 - t) * a + t * b
 }
-
 
 /// Return a 2D direction vector with a angle from
 /// the x axis caped by angle_max

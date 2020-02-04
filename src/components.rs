@@ -1,10 +1,6 @@
-use amethyst::{
-    ecs::prelude::*,
-    core::math::Vector2,
-};
-use specs_derive::Component;
 use crate::math::point_in_rect;
-
+use amethyst::{core::math::Vector2, ecs::prelude::*};
+use specs_derive::Component;
 
 #[derive(Eq, PartialEq)]
 pub enum Side {
@@ -18,7 +14,6 @@ pub struct Paddle {
     pub width: f32,
     pub height: f32,
 }
-
 
 #[derive(Component)]
 pub struct StraightMover {
@@ -44,7 +39,7 @@ pub struct HitBox {
 #[derive(Default)]
 pub struct Score {
     pub left: i32,
-    pub right: i32
+    pub right: i32,
 }
 
 #[derive(Eq, PartialEq)]
@@ -59,9 +54,8 @@ pub struct Buff {
     pub buff: BuffType,
 }
 
-
 impl Paddle {
-    pub fn hit (&self, pos: (f32, f32), point: (f32, f32), radius: f32) -> bool {
+    pub fn hit(&self, pos: (f32, f32), point: (f32, f32), radius: f32) -> bool {
         // To determine whether the ball has collided with a paddle, we create a larger
         // rectangle around the current one, by subtracting the ball radius from the
         // lowest coordinates, and adding the ball radius to the highest ones. The ball
@@ -83,20 +77,22 @@ impl WallBouncer {
     pub fn all() -> WallBouncer {
         WallBouncer {
             vertical: true,
-            horizontal: true
+            horizontal: true,
         }
     }
 
     pub fn horizontal() -> WallBouncer {
         WallBouncer {
             vertical: false,
-            horizontal: true
+            horizontal: true,
         }
     }
 }
 
 impl HitBox {
     pub fn new(radius: f32) -> HitBox {
-        HitBox{radius: radius.max(0.0)}
+        HitBox {
+            radius: radius.max(0.0),
+        }
     }
 }

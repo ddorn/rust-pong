@@ -1,15 +1,15 @@
-pub use self::paddle::PaddleSystem;
-pub use self::winner::WinnerSystem;
 pub use self::buff_spawn::BuffSpawnSystem;
-pub use self::wall_bounce::WallBounceSystem;
 pub use self::move_straight::MoveStraightSystem;
+pub use self::paddle::PaddleSystem;
 pub use self::paddle_bounce::PaddleBounceSystem;
 pub use self::sound_effects::SoundEffectsSystem;
+pub use self::wall_bounce::WallBounceSystem;
+pub use self::winner::WinnerSystem;
 
-mod paddle;
-mod winner;
+mod buff_spawn;
 mod move_straight;
+mod paddle;
 mod paddle_bounce;
 mod sound_effects;
 mod wall_bounce;
-mod buff_spawn;
+mod winner;

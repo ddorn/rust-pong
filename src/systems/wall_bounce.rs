@@ -1,11 +1,11 @@
 use amethyst::{
-    ecs::prelude::*,
-    core::{Transform, SystemDesc},
+    core::{SystemDesc, Transform},
     derive::SystemDesc,
+    ecs::prelude::*,
 };
 
-use crate::components::{StraightMover, WallBouncer, HitBox};
-use crate::config::{ArenaConfig};
+use crate::components::{HitBox, StraightMover, WallBouncer};
+use crate::config::ArenaConfig;
 
 #[derive(SystemDesc)]
 pub struct WallBounceSystem;
@@ -20,15 +20,11 @@ impl<'s> System<'s> for WallBounceSystem {
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (
-            arena,
-            transforms,
-            mut velocities,
-            wall_bouncers,
-            hitboxes,
-        ) = data;
+        let (arena, transforms, mut velocities, wall_bouncers, hitboxes) = data;
 
-        for (vel, transform, walls, hitbox) in (&mut velocities, &transforms, &wall_bouncers, &hitboxes).join() {
+        for (vel, transform, walls, hitbox) in
+            (&mut velocities, &transforms, &wall_bouncers, &hitboxes).join()
+        {
             let x: f32 = transform.translation().x;
             let y: f32 = transform.translation().y;
             let r = hitbox.radius;
@@ -36,7 +32,8 @@ impl<'s> System<'s> for WallBounceSystem {
             // Bounce against top and bottom walls
             if walls.horizontal {
                 if (y < r && vel.direction[1] < 0.0)
-                    || (y > arena.height - r && vel.direction[1] > 0.0) {
+                    || (y > arena.height - r && vel.direction[1] > 0.0)
+                {
                     vel.direction[1] *= -1.0;
                 }
             }
@@ -44,7 +41,8 @@ impl<'s> System<'s> for WallBounceSystem {
             // Bounce against left and right walls
             if walls.vertical {
                 if (x < r && vel.direction[0] < 0.0)
-                    || (x > arena.width - r && vel.direction[0] > 0.0) {
+                    || (x > arena.width - r && vel.direction[0] > 0.0)
+                {
                     vel.direction[0] *= -1.0;
                 }
             }

@@ -1,14 +1,14 @@
 use std::f32::consts::PI;
 
 use amethyst::{
-    ecs::prelude::*,
-    core::{Transform, SystemDesc, math::Vector2},
+    core::{math::Vector2, SystemDesc, Transform},
     derive::SystemDesc,
+    ecs::prelude::*,
 };
 
-use crate::components::{StraightMover, Paddle, Side, HitBox};
+use crate::audio::{Sound, SoundQueue};
+use crate::components::{HitBox, Paddle, Side, StraightMover};
 use crate::config::BallConfig;
-use crate::audio::{SoundQueue, Sound};
 use crate::math::lerp;
 
 #[derive(SystemDesc)]
@@ -34,7 +34,9 @@ impl<'s> System<'s> for PaddleBounceSystem {
             mut sound_queue,
         ) = data;
 
-        for (vel, transform, hitbox) in (&mut velocities, &transforms, &hitboxes).join() {
+        for (vel, transform, hitbox) in
+            (&mut velocities, &transforms, &hitboxes).join()
+        {
             let x: f32 = transform.translation().x;
             let y: f32 = transform.translation().y;
             let r: f32 = hitbox.radius;
@@ -46,11 +48,12 @@ impl<'s> System<'s> for PaddleBounceSystem {
 
                 if paddle.hit(paddle_pos, (x, y), r) {
                     if (paddle.side == Side::Left && vel.direction[0] < 0.0)
-                        || (paddle.side == Side::Right && vel.direction[0] > 0.0) {
-
+                        || (paddle.side == Side::Right
+                            && vel.direction[0] > 0.0)
+                    {
                         // We make the ball bounce with a different angle depending where it landed
                         let hit_prop = ((y - paddle_y) / paddle.height + 0.5)
-                            .min(1.0)  // Clamp
+                            .min(1.0) // Clamp
                             .max(0.0);
 
                         // The new angle is between -45 and 45 degrees for each bat

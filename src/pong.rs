@@ -1,18 +1,21 @@
-use amethyst::{
-    assets::{AssetStorage, Loader, Handle},
-    core::{transform::Transform,
-           timing::Time},
-    prelude::*,
-    ecs::prelude::{Entity},
-    ui::{Anchor, TtfFormat, UiText, UiTransform},
-    renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
-};
-use crate::components::{Paddle, Side, StraightMover, HitBox, WallBouncer, Buff, Ball};
-use crate::config::{ArenaConfig, PaddleConfig, BallConfig};
-use std::f32::consts::PI;
 use crate::audio::initialise_audio;
+use crate::components::{
+    Ball, Buff, HitBox, Paddle, Side, StraightMover, WallBouncer,
+};
+use crate::config::{ArenaConfig, BallConfig, PaddleConfig};
 use crate::math::random_direction;
-
+use amethyst::{
+    assets::{AssetStorage, Handle, Loader},
+    core::{timing::Time, transform::Transform},
+    ecs::prelude::Entity,
+    prelude::*,
+    renderer::{
+        Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat,
+        Texture,
+    },
+    ui::{Anchor, TtfFormat, UiText, UiTransform},
+};
+use std::f32::consts::PI;
 
 #[derive(Default)]
 pub struct Pong {
@@ -26,7 +29,6 @@ pub struct ScoreText {
     pub right: Entity,
 }
 
-
 impl SimpleState for Pong {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
@@ -34,7 +36,8 @@ impl SimpleState for Pong {
         // Wait one second before spawning the ball.
         self.ball_spawn_timer.replace(1.0);
         let sprite_sheet_handle = load_sprite_sheet(world);
-        self.sprite_sheet_handle.replace(sprite_sheet_handle.clone());
+        self.sprite_sheet_handle
+            .replace(sprite_sheet_handle.clone());
 
         world.insert(sprite_sheet_handle);
         world.register::<Buff>();
@@ -45,14 +48,19 @@ impl SimpleState for Pong {
         initialise_audio(world);
     }
 
-    fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
-
+    fn update(
+        &mut self,
+        data: &mut StateData<'_, GameData<'_, '_>>,
+    ) -> SimpleTrans {
         if let Some(mut timer) = self.ball_spawn_timer.take() {
             // Subtract the elapsed time
             timer -= data.world.fetch::<Time>().delta_seconds();
 
             if timer <= 0.0 {
-                initialise_ball(data.world, self.sprite_sheet_handle.clone().unwrap());
+                initialise_ball(
+                    data.world,
+                    self.sprite_sheet_handle.clone().unwrap(),
+                );
             } else {
                 self.ball_spawn_timer.replace(timer);
             }
@@ -61,7 +69,6 @@ impl SimpleState for Pong {
         Trans::None
     }
 }
-
 
 /// Initialises one paddle on the left, and one paddle on the right.
 fn initialise_paddles(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
@@ -74,7 +81,11 @@ fn initialise_paddles(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
     // Correctly position the paddles.
     let y = arena.height / 2.0;
     left_transform.set_translation_xyz(paddles.width * 0.5, y, 0.0);
-    right_transform.set_translation_xyz(arena.width - paddles.width * 0.5, y, 0.0);
+    right_transform.set_translation_xyz(
+        arena.width - paddles.width * 0.5,
+        y,
+        0.0,
+    );
 
     // Assign the sprites for the paddles
     let left_sprite_render = SpriteRender {
@@ -89,12 +100,12 @@ fn initialise_paddles(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
     let left_paddle = Paddle {
         side: Side::Left,
         width: paddles.width,
-        height: paddles.height
+        height: paddles.height,
     };
     let right_paddle = Paddle {
         side: Side::Right,
         width: paddles.width,
-        height: paddles.height
+        height: paddles.height,
     };
 
     // So we can borrow the world mutably to create the entity
@@ -128,7 +139,8 @@ fn initialise_camera(world: &mut World) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(width * 0.5, height * 0.5, 1.0);
 
-    world.create_entity()
+    world
+        .create_entity()
         .with(Camera::standard_2d(width, height))
         .with(transform)
         .build();
@@ -167,12 +179,14 @@ fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
         speed: ball_config.speed,
     };
 
-    let hit_box = HitBox { radius: ball_config.radius };
+    let hit_box = HitBox {
+        radius: ball_config.radius,
+    };
 
     let transform = arena.center();
     let sprite_render = SpriteRender {
         sprite_sheet,
-        sprite_number: 2
+        sprite_number: 2,
     };
 
     // So we can borrow the world mutably to create the entity
@@ -198,12 +212,24 @@ fn initialise_scoreboard(world: &mut World) {
         &world.read_resource(),
     );
     let p1_transform = UiTransform::new(
-        "P1".to_string(), Anchor::TopMiddle, Anchor::TopMiddle,
-        -50., -50., 1., 200., 50.,
+        "P1".to_string(),
+        Anchor::TopMiddle,
+        Anchor::TopMiddle,
+        -50.,
+        -50.,
+        1.,
+        200.,
+        50.,
     );
     let p2_transform = UiTransform::new(
-        "P2".to_string(), Anchor::TopMiddle, Anchor::TopMiddle,
-        50., -50., 1., 200., 50.,
+        "P2".to_string(),
+        Anchor::TopMiddle,
+        Anchor::TopMiddle,
+        50.,
+        -50.,
+        1.,
+        200.,
+        50.,
     );
 
     let p1_score = world
@@ -214,7 +240,8 @@ fn initialise_scoreboard(world: &mut World) {
             "0".to_string(),
             [1., 1., 1., 1.],
             50.,
-        )).build();
+        ))
+        .build();
 
     let p2_score = world
         .create_entity()
@@ -224,8 +251,11 @@ fn initialise_scoreboard(world: &mut World) {
             "0".to_string(),
             [1., 1., 1., 1.],
             50.,
-        )).build();
+        ))
+        .build();
 
-    world.insert(ScoreText { left: p1_score, right: p2_score });
-
+    world.insert(ScoreText {
+        left: p1_score,
+        right: p2_score,
+    });
 }

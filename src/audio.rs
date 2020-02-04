@@ -1,18 +1,15 @@
 use amethyst::{
-    assets::{Loader, AssetStorage},
-    audio::{output::Output, Source, OggFormat, SourceHandle, AudioSink},
+    assets::{AssetStorage, Loader},
+    audio::{output::Output, AudioSink, OggFormat, Source, SourceHandle},
     ecs::{World, WorldExt},
 };
 use std::{iter::Cycle, vec::IntoIter};
 
-
 const BOUNCE_SOUND: &str = "audio/bounce.ogg";
 const SCORE_SOUND: &str = "audio/score.ogg";
 
-const MUSIC_TRACKS: &[&str] = &[
-    "audio/wheres_my_jetpack.ogg",
-    "audio/albatross.ogg",
-];
+const MUSIC_TRACKS: &[&str] =
+    &["audio/wheres_my_jetpack.ogg", "audio/albatross.ogg"];
 
 #[derive(Debug, Copy, Clone)]
 pub enum Sound {
@@ -25,11 +22,9 @@ pub struct Sounds {
     pub bounce_sfx: SourceHandle,
 }
 
-
 pub struct Music {
     pub music: Cycle<IntoIter<SourceHandle>>,
 }
-
 
 #[derive(Default)]
 pub struct SoundQueue {
@@ -52,11 +47,19 @@ impl SoundQueue {
 }
 
 /// Loads an ogg audio track.
-fn load_audio_track(loader: &Loader, world: &World, file: &str) -> SourceHandle {
+fn load_audio_track(
+    loader: &Loader,
+    world: &World,
+    file: &str,
+) -> SourceHandle {
     loader.load(file, OggFormat, (), &world.read_resource())
 }
 
-pub fn play_sound(sound: &SourceHandle, storage: &AssetStorage<Source>, output: Option<&Output>) {
+pub fn play_sound(
+    sound: &SourceHandle,
+    storage: &AssetStorage<Source>,
+    output: Option<&Output>,
+) {
     if let Some(ref output) = output.as_ref() {
         if let Some(sound) = storage.get(&sound) {
             output.play_once(sound, 1.0);
