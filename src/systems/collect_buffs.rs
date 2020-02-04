@@ -3,6 +3,7 @@ use crate::math::pos2d;
 use amethyst::core::{SystemDesc, Transform};
 use amethyst::derive::SystemDesc;
 use amethyst::ecs::prelude::*;
+use crate::config::BuffsConfig;
 
 #[derive(SystemDesc)]
 pub struct CollectBuffSystem;
@@ -10,6 +11,7 @@ pub struct CollectBuffSystem;
 impl<'s> System<'s> for CollectBuffSystem {
     type SystemData = (
         Entities<'s>,
+        Read<'s, BuffsConfig>,
         WriteStorage<'s, Paddle>,
         ReadStorage<'s, Buff>,
         ReadStorage<'s, HitBox>,
@@ -17,7 +19,7 @@ impl<'s> System<'s> for CollectBuffSystem {
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (entities, mut paddles, buffs, hitboxes, transforms) = data;
+        let (entities, buff_config, mut paddles, buffs, hitboxes, transforms) = data;
 
         for (entity, buff, hitbox, buff_pos) in
             (&entities, &buffs, &hitboxes, &transforms).join()
@@ -27,12 +29,12 @@ impl<'s> System<'s> for CollectBuffSystem {
                 if paddle.hit(pos2d(pad_pos), pos2d(buff_pos), hitbox.radius) {
                     if buff.side == paddle.side {
                         match buff.buff {
-                            BuffType::Speed => paddle.speed += 10.,
+                            BuffType::Speed => paddle.speed += buff_config.speed.0,
                             _ => (),
                         }
                     } else {
                         match buff.buff {
-                            BuffType::Speed => paddle.speed -= 5.,
+                            BuffType::Speed => paddle.speed += buff_config.speed.1,
                             _ => (),
                         }
                     }

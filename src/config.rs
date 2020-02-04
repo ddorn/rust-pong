@@ -6,6 +6,7 @@ pub struct PongConfig {
     pub arena: ArenaConfig,
     pub ball: BallConfig,
     pub paddles: PaddleConfig,
+    pub buffs: BuffsConfig,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -27,6 +28,14 @@ pub struct PaddleConfig {
     pub width: f32,
     pub height: f32,
     pub speed: f32,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct BuffsConfig {
+    /// Spawn interval in seconds
+    pub spawn_interval: f32,
+    /// Speed that you gain when the right side (.0) and the wrong (.1)
+    pub speed: (f32, f32),
 }
 
 impl Default for ArenaConfig {
@@ -55,6 +64,15 @@ impl Default for PaddleConfig {
             width: 4.0,
             height: 16.0,
             speed: 40.0,
+        }
+    }
+}
+
+impl Default for BuffsConfig {
+    fn default() -> Self {
+        BuffsConfig {
+            spawn_interval: 3.0,
+            speed: (10.0, -10.0),
         }
     }
 }
