@@ -1,3 +1,4 @@
+use crate::config::PaddleConfig;
 use crate::math::point_in_rect;
 use amethyst::{core::math::Vector2, ecs::prelude::*};
 use specs_derive::Component;
@@ -13,6 +14,7 @@ pub struct Paddle {
     pub side: Side,
     pub width: f32,
     pub height: f32,
+    pub speed: f32,
 }
 
 #[derive(Component)]
@@ -55,7 +57,20 @@ pub struct Buff {
 }
 
 impl Paddle {
-    pub fn hit(&self, pos: (f32, f32), point: (f32, f32), radius: f32) -> bool {
+    pub fn new(side: Side, config: &PaddleConfig) -> Paddle {
+        Paddle {
+            side,
+            width: config.width,
+            height: config.height,
+            speed: config.speed,
+        }
+    }
+    pub fn hit(
+        &self,
+        pos: Vector2<f32>,
+        point: Vector2<f32>,
+        radius: f32,
+    ) -> bool {
         // To determine whether the ball has collided with a paddle, we create a larger
         // rectangle around the current one, by subtracting the ball radius from the
         // lowest coordinates, and adding the ball radius to the highest ones. The ball
@@ -63,12 +78,12 @@ impl Paddle {
         // rectangle.
 
         point_in_rect(
-            point.0,
-            point.1,
-            pos.0 - self.width / 2.0 - radius,
-            pos.1 - self.height / 2.0 - radius,
-            pos.0 + self.width / 2.0 + radius,
-            pos.1 + self.height / 2.0 + radius,
+            point.x,
+            point.y,
+            pos.x - self.width / 2.0 - radius,
+            pos.y - self.height / 2.0 - radius,
+            pos.x + self.width / 2.0 + radius,
+            pos.y + self.height / 2.0 + radius,
         )
     }
 }

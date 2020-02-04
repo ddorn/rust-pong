@@ -93,20 +93,12 @@ fn initialise_paddles(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
         sprite_number: 0, // paddle is the first sprite in the sprite_sheet
     };
     let right_sprite_render = SpriteRender {
-        sprite_sheet: sprite_sheet,
+        sprite_sheet,
         sprite_number: 1, // paddle is the first sprite in the sprite_sheet
     };
 
-    let left_paddle = Paddle {
-        side: Side::Left,
-        width: paddles.width,
-        height: paddles.height,
-    };
-    let right_paddle = Paddle {
-        side: Side::Right,
-        width: paddles.width,
-        height: paddles.height,
-    };
+    let left_paddle = Paddle::new(Side::Left, &paddles);
+    let right_paddle = Paddle::new(Side::Right, &paddles);
 
     // So we can borrow the world mutably to create the entity
     drop(arena);

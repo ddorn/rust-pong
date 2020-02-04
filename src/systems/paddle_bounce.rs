@@ -9,7 +9,7 @@ use amethyst::{
 use crate::audio::{Sound, SoundQueue};
 use crate::components::{HitBox, Paddle, Side, StraightMover};
 use crate::config::BallConfig;
-use crate::math::lerp;
+use crate::math::{lerp, pos2d};
 
 #[derive(SystemDesc)]
 pub struct PaddleBounceSystem;
@@ -34,19 +34,16 @@ impl<'s> System<'s> for PaddleBounceSystem {
             mut sound_queue,
         ) = data;
 
-        for (vel, transform, hitbox) in
+        for (vel, ball_pos, hitbox) in
             (&mut velocities, &transforms, &hitboxes).join()
         {
-            let x: f32 = transform.translation().x;
-            let y: f32 = transform.translation().y;
+            let y: f32 = ball_pos.translation().y;
             let r: f32 = hitbox.radius;
 
-            for (paddle, position) in (&paddles, &transforms).join() {
-                let paddle_x: f32 = position.translation().x;
-                let paddle_y: f32 = position.translation().y;
-                let paddle_pos = (paddle_x, paddle_y);
+            for (paddle, pad_pos) in (&paddles, &transforms).join() {
+                let paddle_y: f32 = pad_pos.translation().y;
 
-                if paddle.hit(paddle_pos, (x, y), r)
+                if paddle.hit(pos2d(pad_pos), pos2d(ball_pos), r)
                     && ((paddle.side == Side::Left && vel.direction[0] < 0.0)
                         || (paddle.side == Side::Right
                             && vel.direction[0] > 0.0))

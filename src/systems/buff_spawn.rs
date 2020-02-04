@@ -50,7 +50,7 @@ impl<'s> System<'s> for BuffSpawnSystem {
             let (side, sprite_id) = if rand::random() {
                 (Side::Left, 6)
             } else {
-                (Side::Left, 4)
+                (Side::Right, 4)
             };
 
             let sprite_render = SpriteRender {

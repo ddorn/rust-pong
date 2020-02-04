@@ -1,4 +1,5 @@
 use amethyst::core::math::Vector2;
+use amethyst::core::Transform;
 use rand::Rng;
 use std::f32::consts::PI;
 
@@ -31,4 +32,9 @@ pub fn random_direction(angle_max: f32) -> Vector2<f32> {
     }
 
     Vector2::new(angle.cos(), angle.sin())
+}
+
+pub fn pos2d(transform: &Transform) -> Vector2<f32> {
+    let trans = transform.translation();
+    Vector2::new(trans.x, trans.y)
 }

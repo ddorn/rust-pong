@@ -6,7 +6,7 @@ use amethyst::ecs::{
 use amethyst::input::{InputHandler, StringBindings};
 
 use crate::components::{Paddle, Side};
-use crate::config::{ArenaConfig, PaddleConfig};
+use crate::config::{ArenaConfig};
 
 #[derive(SystemDesc)]
 pub struct PaddleSystem;
@@ -14,7 +14,6 @@ pub struct PaddleSystem;
 impl<'s> System<'s> for PaddleSystem {
     type SystemData = (
         Read<'s, ArenaConfig>,
-        Read<'s, PaddleConfig>,
         Read<'s, Time>,
         WriteStorage<'s, Transform>,
         ReadStorage<'s, Paddle>,
@@ -22,8 +21,7 @@ impl<'s> System<'s> for PaddleSystem {
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (arena, paddles_config, time, mut transforms, paddles, input) =
-            data;
+        let (arena, time, mut transforms, paddles, input) = data;
 
         for (paddle, transform) in (&paddles, &mut transforms).join() {
             let movement = match paddle.side {
@@ -32,8 +30,7 @@ impl<'s> System<'s> for PaddleSystem {
             };
 
             if let Some(mv_amount) = movement {
-                let mv_amount =
-                    mv_amount * paddles_config.speed * time.delta_seconds();
+                let mv_amount = mv_amount * paddle.speed * time.delta_seconds();
                 if mv_amount != 0.0 {
                     let y = transform.translation().y;
 

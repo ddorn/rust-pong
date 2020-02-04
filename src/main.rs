@@ -73,7 +73,12 @@ fn main() -> amethyst::Result<()> {
         .with(systems::WinnerSystem, "winner_system", &["move_straight"])
         .with(systems::SoundEffectsSystem, "sound_effects_system", &[])
         .with(systems::WallBounceSystem, "wall_bounce", &["move_straight"])
-        .with(systems::BuffSpawnSystem::new(2.0), "buff_spawn", &[]);
+        .with(systems::BuffSpawnSystem::new(2.0), "buff_spawn", &[])
+        .with(
+            systems::CollectBuffSystem,
+            "collect_buff",
+            &["paddle_system", "move_straight"],
+        );
 
     let config = PongConfig::load(config_path);
 
