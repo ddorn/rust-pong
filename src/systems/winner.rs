@@ -2,7 +2,7 @@ use amethyst::core::{Transform, SystemDesc};
 use amethyst::derive::SystemDesc;
 use amethyst::ecs::prelude::*;
 use amethyst::ui::UiText;
-use crate::components::{StraightMover, Score};
+use crate::components::{StraightMover, Score, Ball};
 use crate::pong::ScoreText;
 use crate::config::ArenaConfig;
 use crate::audio::{SoundQueue, Sound};
@@ -16,6 +16,7 @@ impl<'s> System<'s> for WinnerSystem {
         Read<'s, ArenaConfig>,
         WriteStorage<'s, StraightMover>,
         ReadStorage<'s, Transform>,
+        ReadStorage<'s, Ball>,
         // Score and scoreboard
         Write<'s, Score>,
         WriteStorage<'s, UiText>,
@@ -29,13 +30,14 @@ impl<'s> System<'s> for WinnerSystem {
             arena,
             mut balls,
             transforms,
+            ball_tags,
             mut score,
             mut ui_text,
             score_text,
             mut sound_queue,
         ) = data;
 
-        for (ball, transform) in (&mut balls, &transforms).join() {
+        for (ball, transform, _) in (&mut balls, &transforms, &ball_tags).join() {
             if transform.translation().x < 0.0 && ball.direction[0] < 0.0 {
                 score.right += 1;
 

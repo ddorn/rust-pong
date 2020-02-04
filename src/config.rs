@@ -1,3 +1,4 @@
+use amethyst::core::Transform;
 use serde::{Deserialize, Serialize};
 
 
@@ -56,5 +57,14 @@ impl Default for PaddleConfig {
             height: 16.0,
             speed: 40.0
         }
+    }
+}
+
+impl ArenaConfig {
+    pub fn center(&self) -> Transform {
+        let mut trans = Transform::default();
+        trans.set_translation_xyz(self.width / 2.0, self.height / 2.0, 0.0);
+
+        trans
     }
 }

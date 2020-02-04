@@ -1,18 +1,17 @@
 use amethyst::{
     assets::{AssetStorage, Loader, Handle},
     core::{transform::Transform,
-           timing::Time,
-           math::Vector2},
+           timing::Time},
     prelude::*,
     ecs::prelude::{Entity},
     ui::{Anchor, TtfFormat, UiText, UiTransform},
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
 };
-use crate::components::{Paddle, Side, StraightMover, HitBox, WallBouncer};
+use crate::components::{Paddle, Side, StraightMover, HitBox, WallBouncer, Buff, Ball};
 use crate::config::{ArenaConfig, PaddleConfig, BallConfig};
-use rand::Rng;
 use std::f32::consts::PI;
 use crate::audio::initialise_audio;
+use crate::math::random_direction;
 
 
 #[derive(Default)]
@@ -34,7 +33,11 @@ impl SimpleState for Pong {
 
         // Wait one second before spawning the ball.
         self.ball_spawn_timer.replace(1.0);
-        self.sprite_sheet_handle.replace(load_sprite_sheet(world));
+        let sprite_sheet_handle = load_sprite_sheet(world);
+        self.sprite_sheet_handle.replace(sprite_sheet_handle.clone());
+
+        world.insert(sprite_sheet_handle);
+        world.register::<Buff>();
 
         initialise_camera(world);
         initialise_paddles(world, self.sprite_sheet_handle.clone().unwrap());
@@ -159,22 +162,14 @@ fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
     let arena = world.fetch::<ArenaConfig>();
     let ball_config = world.fetch::<BallConfig>();
 
-    let mut angle = rand::thread_rng().gen_range(-PI / 4.0, PI / 4.0);
-    if rand::random() {
-        // random starting player
-        angle *= -1.0;
-    }
-
     let ball = StraightMover {
-        direction: Vector2::new(angle.cos(), angle.sin()),
+        direction: random_direction(PI / 4.0),
         speed: ball_config.speed,
     };
 
     let hit_box = HitBox { radius: ball_config.radius };
 
-    let mut transform = Transform::default();
-    transform.set_translation_xyz(arena.width * 0.5, arena.height * 0.5, 0.0);
-
+    let transform = arena.center();
     let sprite_render = SpriteRender {
         sprite_sheet,
         sprite_number: 2
@@ -186,11 +181,12 @@ fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
 
     world
         .create_entity()
+        .with(Ball)
         .with(ball)
         .with(hit_box)
         .with(transform)
         .with(sprite_render)
-        .with(WallBouncer { vertical: false, horizontal: true })
+        .with(WallBouncer::horizontal())
         .build();
 }
 

@@ -44,7 +44,7 @@ impl<'s> System<'s> for WallBounceSystem {
             // Bounce against left and right walls
             if walls.vertical {
                 if (x < r && vel.direction[0] < 0.0)
-                    || (x > arena.width - r && vel.direction[1] > 0.0) {
+                    || (x > arena.width - r && vel.direction[0] > 0.0) {
                     vel.direction[0] *= -1.0;
                 }
             }

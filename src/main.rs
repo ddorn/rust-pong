@@ -82,7 +82,10 @@ fn main() -> amethyst::Result<()> {
               &[])
         .with(systems::WallBounceSystem,
               "wall_bounce",
-              &["move_straight"]);
+              &["move_straight"])
+        .with(systems::BuffSpawnSystem::new(2.0),
+              "buff_spawn",
+              &[]);
 
     let config = PongConfig::load(config_path);
 

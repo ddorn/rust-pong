@@ -1,5 +1,5 @@
 use amethyst::{
-    ecs::prelude::{Component, DenseVecStorage},
+    ecs::prelude::*,
     core::math::Vector2,
 };
 use specs_derive::Component;
@@ -32,6 +32,9 @@ pub struct WallBouncer {
     pub horizontal: bool,
 }
 
+#[derive(Component, Default)]
+#[storage(NullStorage)]
+pub struct Ball;
 
 #[derive(Component)]
 pub struct HitBox {
@@ -42,6 +45,18 @@ pub struct HitBox {
 pub struct Score {
     pub left: i32,
     pub right: i32
+}
+
+#[derive(Eq, PartialEq)]
+pub enum BuffType {
+    Size,
+    Speed,
+}
+
+#[derive(Component)]
+pub struct Buff {
+    pub side: Side,
+    pub buff: BuffType,
 }
 
 
@@ -61,5 +76,27 @@ impl Paddle {
             pos.0 + self.width / 2.0 + radius,
             pos.1 + self.height / 2.0 + radius,
         )
+    }
+}
+
+impl WallBouncer {
+    pub fn all() -> WallBouncer {
+        WallBouncer {
+            vertical: true,
+            horizontal: true
+        }
+    }
+
+    pub fn horizontal() -> WallBouncer {
+        WallBouncer {
+            vertical: false,
+            horizontal: true
+        }
+    }
+}
+
+impl HitBox {
+    pub fn new(radius: f32) -> HitBox {
+        HitBox{radius: radius.max(0.0)}
     }
 }

@@ -1,7 +1,7 @@
 
 use amethyst::core::{Transform, SystemDesc, timing::Time};
 use amethyst::derive::SystemDesc;
-use amethyst::ecs::{Join, Read, System, SystemData, World, WriteStorage};
+use amethyst::ecs::prelude::*;
 use crate::components::StraightMover;
 
 
