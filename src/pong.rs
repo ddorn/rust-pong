@@ -93,7 +93,7 @@ fn initialise_paddles(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
         sprite_number: 0, // paddle is the first sprite in the sprite_sheet
     };
     let right_sprite_render = SpriteRender {
-        sprite_sheet: sprite_sheet.clone(),
+        sprite_sheet: sprite_sheet,
         sprite_number: 1, // paddle is the first sprite in the sprite_sheet
     };
 
@@ -247,7 +247,7 @@ fn initialise_scoreboard(world: &mut World) {
         .create_entity()
         .with(p2_transform)
         .with(UiText::new(
-            font_handle.clone(),
+            font_handle,
             "0".to_string(),
             [1., 1., 1., 1.],
             50.,

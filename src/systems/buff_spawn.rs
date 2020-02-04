@@ -20,7 +20,7 @@ impl BuffSpawnSystem {
     pub fn new(delay: f32) -> BuffSpawnSystem {
         BuffSpawnSystem {
             last_spwan: 0.0,
-            delay: delay,
+            delay,
         }
     }
 }
