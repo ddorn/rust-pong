@@ -23,7 +23,8 @@ pub fn lerp(t: f32, a: f32, b: f32) -> f32 {
 /// Return a 2D direction vector with a angle from
 /// the x axis caped by angle_max
 pub fn random_direction(angle_max: f32) -> Vector2<f32> {
-    let mut angle = rand::thread_rng().gen_range(-angle_max, PI / angle_max);
+    let angle = angle_max.min(PI / 2.0).max(0.0);
+    let mut angle = rand::thread_rng().gen_range(-angle, angle);
     if rand::random() {
         // random starting player
         angle += PI;
