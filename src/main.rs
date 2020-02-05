@@ -78,6 +78,11 @@ fn main() -> amethyst::Result<()> {
             systems::CollectBuffSystem,
             "collect_buff",
             &["paddle_system", "move_straight"],
+        )
+        .with(
+            systems::TrailGeneratorSystem,
+            "trail_generator",
+            &["move_straight", "paddle_system"],
         );
 
     let config = PongConfig::load(config_path);

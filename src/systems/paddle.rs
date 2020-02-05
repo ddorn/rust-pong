@@ -6,7 +6,7 @@ use amethyst::ecs::{
 use amethyst::input::{InputHandler, StringBindings};
 
 use crate::components::{Paddle, Side};
-use crate::config::{ArenaConfig};
+use crate::config::ArenaConfig;
 
 #[derive(SystemDesc)]
 pub struct PaddleSystem;

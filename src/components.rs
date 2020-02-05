@@ -56,6 +56,19 @@ pub struct Buff {
     pub buff: BuffType,
 }
 
+#[derive(Component)]
+pub struct TrailGenerator {
+    pub duration: f32,
+    pub delay: f32,
+    elapsed: f32,
+}
+
+#[derive(Component)]
+pub struct Trail {
+    pub duration: f32,
+    pub depth: f32,
+}
+
 impl Paddle {
     pub fn new(side: Side, config: &PaddleConfig) -> Paddle {
         Paddle {
@@ -109,5 +122,24 @@ impl HitBox {
         HitBox {
             radius: radius.max(0.0),
         }
+    }
+}
+
+impl TrailGenerator {
+    pub fn new(duration: f32, delay: f32) -> TrailGenerator {
+        TrailGenerator {
+            duration,
+            delay,
+            elapsed: 0.0,
+        }
+    }
+
+    pub fn need_trail_creation(&mut self, delta_seconds: f32) -> bool {
+        self.elapsed += delta_seconds;
+        if self.elapsed >= self.delay {
+            self.elapsed -= self.delay;
+            return true;
+        }
+        false
     }
 }
