@@ -1,6 +1,6 @@
 use crate::audio::initialise_audio;
 use crate::components::{
-    Ball, HitBox, Paddle, Side, StraightMover, Trail, TrailGenerator,
+    Ball, HitBox, Paddle, Side, StraightMover, TrailGenerator,
     WallBouncer,
 };
 use crate::config::{ArenaConfig, BallConfig, PaddleConfig};
@@ -41,7 +41,6 @@ impl SimpleState for Pong {
             .replace(sprite_sheet_handle.clone());
 
         world.insert(sprite_sheet_handle);
-        world.register::<Trail>();
 
         initialise_camera(world);
         initialise_paddles(world, self.sprite_sheet_handle.clone().unwrap());
@@ -194,7 +193,7 @@ fn initialise_ball(world: &mut World, sprite_sheet: Handle<SpriteSheet>) {
         .with(transform)
         .with(sprite_render)
         .with(WallBouncer::horizontal())
-        .with(TrailGenerator::new(1.0, 0.1))
+        .with(TrailGenerator::new(0.5, 0.05))
         .build();
 }
 

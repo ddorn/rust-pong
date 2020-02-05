@@ -2,7 +2,7 @@ use crate::components::{Trail, TrailGenerator};
 use amethyst::core::{timing::Time, SystemDesc, Transform};
 use amethyst::derive::SystemDesc;
 use amethyst::ecs::prelude::*;
-use amethyst::renderer::{palette::Srgba, resources::Tint, SpriteRender};
+use amethyst::renderer::SpriteRender;
 
 #[derive(SystemDesc, Default)]
 pub struct TrailGeneratorSystem;
@@ -28,10 +28,7 @@ impl<'s> System<'s> for TrailGeneratorSystem {
                     .create_entity(&entities)
                     .with(tranform.clone())
                     .with(sprite.clone())
-                    .with(Trail {
-                        duration: trail.duration,
-                        depth: 0.0,
-                    })
+                    .with(Trail::new(trail.duration))
                     .build();
             }
         }

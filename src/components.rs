@@ -66,7 +66,7 @@ pub struct TrailGenerator {
 #[derive(Component)]
 pub struct Trail {
     pub duration: f32,
-    pub depth: f32,
+    elapsed: f32,
 }
 
 impl Paddle {
@@ -141,5 +141,26 @@ impl TrailGenerator {
             return true;
         }
         false
+    }
+}
+
+impl Trail {
+    pub fn new(duration: f32) -> Trail {
+        Trail {
+            duration,
+            elapsed: 0.0
+        }
+    }
+
+    /// True if the trail still has to live
+    pub fn update(&mut self, delta_seconds: f32) -> bool {
+        self.elapsed += delta_seconds;
+        self.elapsed < self.duration
+    }
+
+    /// Proportion of the time elapsed just started is zero
+    /// and one is the end of the trail
+    pub fn prop(&self) -> f32 {
+        self.elapsed / self.duration
     }
 }

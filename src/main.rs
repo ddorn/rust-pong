@@ -1,5 +1,8 @@
 //! Pong Tutorial 1
 
+#[warn(clippy::type_complexity)]
+
+
 use amethyst::{
     audio::{AudioBundle, DjSystemDesc},
     core::transform::TransformBundle,
@@ -83,7 +86,8 @@ fn main() -> amethyst::Result<()> {
             systems::TrailGeneratorSystem,
             "trail_generator",
             &["move_straight", "paddle_system"],
-        );
+        )
+        .with(systems::TrailsSystem, "trails", &[]);
 
     let config = PongConfig::load(config_path);
 

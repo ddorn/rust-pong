@@ -5,6 +5,7 @@ pub use self::paddle::PaddleSystem;
 pub use self::paddle_bounce::PaddleBounceSystem;
 pub use self::sound_effects::SoundEffectsSystem;
 pub use self::trail_generator::TrailGeneratorSystem;
+pub use self::trails::TrailsSystem;
 pub use self::wall_bounce::WallBounceSystem;
 pub use self::winner::WinnerSystem;
 
@@ -15,5 +16,6 @@ mod paddle;
 mod paddle_bounce;
 mod sound_effects;
 mod trail_generator;
+mod trails;
 mod wall_bounce;
 mod winner;
